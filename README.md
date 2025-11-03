@@ -125,15 +125,15 @@ Response: 201 Created, body -> TaskResponse
 
 Team 1 (Create, FindAll & Update)
 #### Required use cases:
-CreateProject
-CreateTask (under a project) — must verify project exists and is not CLOSED
-FindAllProjects (filters: status, startDate≥, endDate≤)
-UpdateProject (name, dates, description) — enforce uniqueness on updated name
-UpdateTask (title, estimateHours, assignee)
+- CreateProject
+- CreateTask (under a project) — must verify project exists and is not CLOSED
+- FindAllProjects (filters: status, startDate≥, endDate≤)
+- UpdateProject (name, dates, description) — enforce uniqueness on updated name
+- UpdateTask (title, estimateHours, assignee)
 #### Endpoints to implement:
-POST /projects
-POST /projects/{projectId}/tasks
-GET /projects?status=ACTIVE
-PUT /projects/{projectId}
-PUT /projects/{projectId}/tasks/{taskId}
+- POST /projects
+- POST /projects/{projectId}/tasks
+- GET /projects?status=ACTIVE
+- PUT /projects/{projectId}
+- PUT /projects/{projectId}/tasks/{taskId}
 
