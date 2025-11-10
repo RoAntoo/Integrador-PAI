@@ -5,11 +5,10 @@ import model.enums.TaskStatus;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.UUID;
 
 public class Task {
 
-    private UUID id;
+    private Long id;
     private Project project;
     private String title;
     private Integer estimateHours;
@@ -19,7 +18,7 @@ public class Task {
     private LocalDateTime createdAt;
 
     // Constructor privado
-    private Task(UUID id, Project project, String title, Integer estimateHours,
+    private Task(Long id, Project project, String title, Integer estimateHours,
                  String assignee, TaskStatus status, LocalDateTime finishedAt, LocalDateTime createdAt) {
         this.id = id;
         this.project = project;
@@ -31,9 +30,8 @@ public class Task {
         this.createdAt = createdAt;
     }
 
-    // Factory method
     public static Task create(Project project, String title, Integer estimateHours,
-                              String assignee, TaskStatus status) {
+                              String assignee, TaskStatus status, LocalDateTime createdAtTimestamp) {
         if (project == null) {
             throw new IllegalArgumentException("Project is required");
         }
@@ -47,14 +45,13 @@ public class Task {
             throw new IllegalArgumentException("Cannot add a task to a CLOSED project");
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime finishedAt = (status == TaskStatus.DONE) ? now : null;
+        LocalDateTime finishedAt = (status == TaskStatus.DONE) ? createdAtTimestamp : null;
 
-        return new Task(UUID.randomUUID(), project, title, estimateHours, assignee, status, finishedAt, now);
+        return new Task(null, project, title, estimateHours, assignee, status, finishedAt, createdAtTimestamp);
     }
 
     // Getters
-    public UUID getId() { return id; }
+    public Long getId() { return id; }
     public Project getProject() { return project; }
     public String getTitle() { return title; }
     public Integer getEstimateHours() { return estimateHours; }
@@ -67,14 +64,25 @@ public class Task {
     public void setTitle(String title) { this.title = title; }
     public void setEstimateHours(Integer estimateHours) { this.estimateHours = estimateHours; }
     public void setAssignee(String assignee) { this.assignee = assignee; }
-    public void setStatus(TaskStatus status) { this.status = status; }
+    protected void setFinishedAt(LocalDateTime finishedAt) { this.finishedAt = finishedAt; }
+
+    public void setStatus(TaskStatus newStatus, LocalDateTime timestamp) {
+        if (newStatus == TaskStatus.DONE && this.status != TaskStatus.DONE) {
+            this.finishedAt = timestamp; //
+        }
+        else if (newStatus != TaskStatus.DONE) {
+            this.finishedAt = null;
+        }
+
+        this.status = newStatus;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Task)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return Objects.equals(id, task.id);
+        return id != null && Objects.equals(id, task.id);
     }
 
     @Override

@@ -5,9 +5,6 @@ import input.IGetTaskByIdInput;
 import model.Task;
 import output.ITaskRepository;
 
-import java.util.Optional;
-import java.util.UUID;
-
 public class GetTaskByIdByIdUseCase implements IGetTaskByIdInput {
     private final ITaskRepository taskRepository;
 
@@ -16,13 +13,10 @@ public class GetTaskByIdByIdUseCase implements IGetTaskByIdInput {
     }
 
     @Override
-    public Optional<Task> getTaskById(UUID id) {
-        Optional<Task> taskOptional = this.taskRepository.getTaskById(id);
+    public Task getTaskById(Long id) {
+        return taskRepository.findById(id)
 
-        if (!taskOptional.isPresent()) {
-            throw new ResourceNotFoundException("Task with ID " + id + " not found.");
-        }
-
-        return taskOptional;
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Task with ID " + id + " not found."));
     }
 }

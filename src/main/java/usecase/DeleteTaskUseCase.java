@@ -5,8 +5,6 @@ import output.ITaskRepository;
 import exception.ResourceNotFoundException;
 import model.Task;
 
-import java.util.UUID;
-
 public class DeleteTaskUseCase implements IDeleteTaskInput {
 
     private final ITaskRepository taskRepository;
@@ -16,10 +14,12 @@ public class DeleteTaskUseCase implements IDeleteTaskInput {
     }
 
     @Override
-    public Task deleteTaskById(UUID id) {
-        if (!taskRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Task with ID " + id + " not found.");
-        }
-        return taskRepository.deleteById(id);
+    public Task deleteTaskById(Long id) {
+        Task taskToDelete = taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task with ID " + id + " not found."));
+
+        taskRepository.deleteById(id);
+
+        return taskToDelete;
     }
 }

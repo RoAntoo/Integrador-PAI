@@ -16,10 +16,6 @@ public class GetTasks implements IGetTaskInput {
 
     @Override
     public List<Task> getTasks() {
-        List<Task> tasks = taskRepository.getAllTasks();
-        if (tasks.isEmpty()) {
-            return List.of();
-        }
-        return tasks;
+        return taskRepository.getAllTasks();
     }
 }
