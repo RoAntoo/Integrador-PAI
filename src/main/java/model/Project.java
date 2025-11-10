@@ -4,19 +4,17 @@ import model.enums.ProjectStatus;
 
 import java.time.LocalDate;
 import java.util.Objects;
-import java.util.UUID;
 
 public class Project {
 
-    private UUID id;
+    private Long id;
     private String name;
     private LocalDate startDate;
     private LocalDate endDate;
     private ProjectStatus status;
     private String description;
 
-    // Constructor privado
-    private Project(UUID id, String name, LocalDate startDate, LocalDate endDate,
+    private Project(Long id, String name, LocalDate startDate, LocalDate endDate, // CAMBIO: id es Long
                     ProjectStatus status, String description) {
         this.id = id;
         this.name = name;
@@ -26,56 +24,57 @@ public class Project {
         this.description = description;
     }
 
-    // Factory method con validaciones
     public static Project create(String name, LocalDate startDate, LocalDate endDate,
-                                 ProjectStatus status, String description) {
+                                 ProjectStatus status, String description,
+                                 LocalDate today) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Project name is required");
         }
         if (endDate.isBefore(startDate)) {
             throw new IllegalArgumentException("End date must be after start date");
         }
-        if (endDate.isBefore(LocalDate.now())) {
+        if (endDate.isBefore(today)) {
             throw new IllegalArgumentException("End date must be today or later");
         }
 
-        return new Project(UUID.randomUUID(), name, startDate, endDate, status, description);
+        return new Project(null, name, startDate, endDate, status, description);
     }
 
     // Getters
-    public UUID getId() { return id; }
+    public Long getId() { return id; }
     public String getName() { return name; }
     public LocalDate getStartDate() { return startDate; }
     public LocalDate getEndDate() { return endDate; }
     public ProjectStatus getStatus() { return status; }
     public String getDescription() { return description; }
 
-    // Métodos específicos para actualizar (sin setters genéricos)
-    public void updateName(String newName) {
-        if (newName == null || newName.isBlank()) {
-            throw new IllegalArgumentException("Project name cannot be empty");
-        }
-        this.name = newName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void updateDates(LocalDate newStart, LocalDate newEnd) {
-        if (newEnd.isBefore(newStart)) {
-            throw new IllegalArgumentException("End date must be after start date");
-        }
-        this.startDate = newStart;
-        this.endDate = newEnd;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
-    public void updateStatus(ProjectStatus newStatus) {
-        this.status = newStatus;
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setStatus(ProjectStatus status) {
+        this.status = status;
+    }
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Project)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Project project = (Project) o;
-        return Objects.equals(id, project.id);
+        return id != null && Objects.equals(id, project.id);
     }
 
     @Override
