@@ -48,11 +48,11 @@ class CreateProjectUseCaseTest {
         endDate = fakeToday.plusDays(10);
 
         validDTO = new CreateProjectDTO(
-                "Proyecto Test",
+                "project Test",
                 startDate,
                 endDate,
                 ProjectStatus.PLANNED,
-                "Descripción"
+                "Descriptión"
         );
     }
 
@@ -89,8 +89,8 @@ class CreateProjectUseCaseTest {
     void testCreateProject_Fails_WhenEndDateIsBeforeStartDate() {
         CreateProjectDTO dto = new CreateProjectDTO(
                 "Test",
-                validDTO.endDate(),   // StartDate (más tarde)
-                validDTO.startDate(), // EndDate (más temprano)
+                validDTO.endDate(),   // StartDate (+ tarde)
+                validDTO.startDate(), // EndDate (+ tem)
                 ProjectStatus.PLANNED,
                 "Desc"
         );
@@ -105,11 +105,11 @@ class CreateProjectUseCaseTest {
     @Test
     void testCreateProject_Fails_WhenEndDateIsBeforeToday() {
         LocalDate endDateInPast = fakeToday.minusDays(1); // Un día ANTES del 'today'
-        LocalDate startDateInPast = fakeToday.minusDays(2); // Dos días ANTES (para que sea válido)
+        LocalDate startDateInPast = fakeToday.minusDays(2); // Dos días ANTES (para que lo tome)
 
         CreateProjectDTO dto = new CreateProjectDTO(
                 "Test",
-                startDateInPast, // <-- CORREGIDO
+                startDateInPast,
                 endDateInPast,
                 ProjectStatus.PLANNED,
                 "Desc"

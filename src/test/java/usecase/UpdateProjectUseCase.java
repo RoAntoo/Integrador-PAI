@@ -38,11 +38,11 @@ class UpdateProjectUseCaseTest {
     void setUp() {
         projectId = 1L;
         existingProject = Project.create(
-                "Proyecto Original",
+                "original project",
                 LocalDate.of(2025, 1, 10),
                 LocalDate.of(2025, 1, 20),
                 ProjectStatus.ACTIVE,
-                "Desc original",
+                "original desc",
                 LocalDate.of(2025, 1, 1) // today
         );
     }
@@ -50,25 +50,25 @@ class UpdateProjectUseCaseTest {
     @Test
     void testUpdateProject_HappyPath_AllFields() {
         when(projectRepository.findById(projectId)).thenReturn(Optional.of(existingProject));
-        when(projectRepository.existsByName("Nuevo Nombre")).thenReturn(false);
+        when(projectRepository.existsByName("new name")).thenReturn(false);
         when(projectRepository.save(any(Project.class))).thenReturn(existingProject);
 
         UpdateProjectDTO dto = new UpdateProjectDTO(
-                "Nuevo Nombre",
+                "new name",
                 LocalDate.of(2025, 1, 12),
                 LocalDate.of(2025, 1, 22),
-                "Nueva Desc"
+                "new desc"
         );
 
         Project result = updateProjectUseCase.updateProject(projectId, dto);
 
         assertNotNull(result);
-        assertEquals("Nuevo Nombre", result.getName());
+        assertEquals("new name", result.getName());
         assertEquals(LocalDate.of(2025, 1, 12), result.getStartDate());
         assertEquals(LocalDate.of(2025, 1, 22), result.getEndDate());
-        assertEquals("Nueva Desc", result.getDescription());
+        assertEquals("new desc", result.getDescription());
         verify(projectRepository, times(1)).findById(projectId);
-        verify(projectRepository, times(1)).existsByName("Nuevo Nombre");
+        verify(projectRepository, times(1)).existsByName("new name");
         verify(projectRepository, times(1)).save(existingProject);
     }
 
@@ -86,7 +86,7 @@ class UpdateProjectUseCaseTest {
 
         Project result = updateProjectUseCase.updateProject(projectId, dto);
 
-        assertEquals("Proyecto Original", result.getName());
+        assertEquals("original project", result.getName());
         assertEquals(LocalDate.of(2025, 1, 10), result.getStartDate());
         assertEquals(LocalDate.of(2025, 1, 25), result.getEndDate());
         verify(projectRepository, never()).existsByName(anyString());
@@ -97,7 +97,7 @@ class UpdateProjectUseCaseTest {
     void testUpdateProject_Fails_WhenProjectNotFound() {
         when(projectRepository.findById(projectId)).thenReturn(Optional.empty());
 
-        UpdateProjectDTO dto = new UpdateProjectDTO("Nuevo", null, null, null);
+        UpdateProjectDTO dto = new UpdateProjectDTO("new", null, null, null);
 
         assertThrows(ResourceNotFoundException.class, () -> {
             updateProjectUseCase.updateProject(projectId, dto);
@@ -109,15 +109,15 @@ class UpdateProjectUseCaseTest {
     @Test
     void testUpdateProject_Fails_WhenNameIsDuplicate() {
         when(projectRepository.findById(projectId)).thenReturn(Optional.of(existingProject));
-        when(projectRepository.existsByName("Nombre Duplicado")).thenReturn(true);
+        when(projectRepository.existsByName("duplicate name")).thenReturn(true);
 
-        UpdateProjectDTO dto = new UpdateProjectDTO("Nombre Duplicado", null, null, null);
+        UpdateProjectDTO dto = new UpdateProjectDTO("duplicate name", null, null, null);
 
         assertThrows(DuplicateResourceException.class, () -> {
             updateProjectUseCase.updateProject(projectId, dto);
         });
 
-        verify(projectRepository, times(1)).existsByName("Nombre Duplicado");
+        verify(projectRepository, times(1)).existsByName("duplicate name");
         verify(projectRepository, never()).save(any(Project.class));
     }
 
@@ -143,7 +143,7 @@ class UpdateProjectUseCaseTest {
     void testUpdateProject_Fails_WhenMixingOldAndNewDatesAreInvalid() {
         when(projectRepository.findById(projectId)).thenReturn(Optional.of(existingProject));
 
-        // El StartDate (10-Ene) se mantiene, pero el nuevo EndDate (9-Ene) es inválido
+        //StartDate (10-ene) se mantiene, pero el nuevo EndDate (9-Ene) es invalido
         UpdateProjectDTO dto = new UpdateProjectDTO(
                 null,
                 null,
