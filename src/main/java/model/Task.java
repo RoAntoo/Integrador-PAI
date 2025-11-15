@@ -2,36 +2,63 @@ package model;
 
 import model.enums.ProjectStatus;
 import model.enums.TaskStatus;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@Table(name = "tasks")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Task {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Project project;
+
+    @Column(nullable = false)
     private String title;
+
     private Integer estimateHours;
     private String assignee;
+
+    @Enumerated(EnumType.STRING)
     private TaskStatus status;
+
     private LocalDateTime finishedAt;
     private LocalDateTime createdAt;
 
-    // Constructor privado
-    private Task(Long id, Project project, String title, Integer estimateHours,
-                 String assignee, TaskStatus status, LocalDateTime finishedAt, LocalDateTime createdAt) {
-        this.id = id;
+    // --- ¡ACA ESTA DE FORMA EXPLICITA LA RELACION! ---
+    // Muchas Tareas pertenecen a Un Proyecto
+    // @JoinColumn le dice a JPA que esta tabla (tasks) tendrá una
+    // columna llamada 'project_id' que es la Foreign Key.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id", nullable = false)
+    private Project project;
+
+
+    // --- CONSTRUCTOR Y FACTORY ---
+    private Task(Project project, String title, Integer estimateHours,
+                 String assignee, TaskStatus status, LocalDateTime createdAt) {
         this.project = project;
         this.title = title;
         this.estimateHours = estimateHours;
         this.assignee = assignee;
         this.status = status;
-        this.finishedAt = finishedAt;
         this.createdAt = createdAt;
+        if (status == TaskStatus.DONE) {
+            this.finishedAt = createdAt;
+        }
     }
 
     public static Task create(Project project, String title, Integer estimateHours,
                               String assignee, TaskStatus status, LocalDateTime createdAtTimestamp) {
+
         if (project == null) {
             throw new IllegalArgumentException("Project is required");
         }
@@ -45,38 +72,19 @@ public class Task {
             throw new IllegalArgumentException("Cannot add a task to a CLOSED project");
         }
 
-        LocalDateTime finishedAt = (status == TaskStatus.DONE) ? createdAtTimestamp : null;
-
-        return new Task(null, project, title, estimateHours, assignee, status, finishedAt, createdAtTimestamp);
+        return new Task(project, title, estimateHours, assignee, status, createdAtTimestamp);
     }
-
-    // Getters
-    public Long getId() { return id; }
-    public Project getProject() { return project; }
-    public String getTitle() { return title; }
-    public Integer getEstimateHours() { return estimateHours; }
-    public String getAssignee() { return assignee; }
-    public TaskStatus getStatus() { return status; }
-    public LocalDateTime getFinishedAt() { return finishedAt; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-
-    // Setters
-    public void setTitle(String title) { this.title = title; }
-    public void setEstimateHours(Integer estimateHours) { this.estimateHours = estimateHours; }
-    public void setAssignee(String assignee) { this.assignee = assignee; }
-    protected void setFinishedAt(LocalDateTime finishedAt) { this.finishedAt = finishedAt; }
 
     public void setStatus(TaskStatus newStatus, LocalDateTime timestamp) {
         if (newStatus == TaskStatus.DONE && this.status != TaskStatus.DONE) {
-            this.finishedAt = timestamp; //
-        }
-        else if (newStatus != TaskStatus.DONE) {
+            this.finishedAt = timestamp;
+        } else if (newStatus != TaskStatus.DONE) {
             this.finishedAt = null;
         }
-
         this.status = newStatus;
     }
 
+    // --- Equals y HashCode ---
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

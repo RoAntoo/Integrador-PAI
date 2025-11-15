@@ -1,22 +1,48 @@
 package model;
 
 import model.enums.ProjectStatus;
+import model.Task;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table(name = "projects")
+@Getter // Lombok crea todos los Getters
+@Setter // Lombok crea todos los Setters
+@NoArgsConstructor //Lombok crea un constructor vacío
 public class Project {
 
+    @Id // Marca este campo como la Primary Key
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Le dice a la BD que genere el ID auto
     private Long id;
+
+    @Column(nullable = false, unique = true)
     private String name;
+
     private LocalDate startDate;
     private LocalDate endDate;
+
+    @Enumerated(EnumType.STRING) // Guarda el Enum como "ACTIVE" en lugar de 0, 1, 2
     private ProjectStatus status;
+
     private String description;
 
-    private Project(Long id, String name, LocalDate startDate, LocalDate endDate, // CAMBIO: id es Long
+    // Un Proyecto tiene muchas Tareas
+    // mappedBy = "project" le dice a JPA: "La relacion la maneja el campo 'project' en la clase Task"
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Task> tasks = new ArrayList<>();
+
+
+    // --- CONSTRUCTOR Y FACTORY ---
+    private Project(String name, LocalDate startDate, LocalDate endDate,
                     ProjectStatus status, String description) {
-        this.id = id;
         this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -24,6 +50,7 @@ public class Project {
         this.description = description;
     }
 
+    // Factory method (sigue igual)
     public static Project create(String name, LocalDate startDate, LocalDate endDate,
                                  ProjectStatus status, String description,
                                  LocalDate today) {
@@ -37,38 +64,15 @@ public class Project {
             throw new IllegalArgumentException("End date must be today or later");
         }
 
-        return new Project(null, name, startDate, endDate, status, description);
+        return new Project(name, startDate, endDate, status, description);
     }
 
-    // Getters
-    public Long getId() { return id; }
-    public String getName() { return name; }
-    public LocalDate getStartDate() { return startDate; }
-    public LocalDate getEndDate() { return endDate; }
-    public ProjectStatus getStatus() { return status; }
-    public String getDescription() { return description; }
-
-    public void setName(String name) {
-        this.name = name;
+    public void addTask(Task task) {
+        tasks.add(task);
+        task.setProject(this);
     }
 
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setStatus(ProjectStatus status) {
-        this.status = status;
-    }
-
-
+    // --- Equals y HashCode (basados solo en el ID) ---
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

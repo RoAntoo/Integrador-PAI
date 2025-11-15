@@ -3,10 +3,10 @@ package usecase;
 import exception.BusinessRuleViolationException;
 import exception.ResourceNotFoundException;
 import input.ITaskCreateInput;
+import input.DTO.CreateTaskDTO;
 import model.Project;
 import model.Task;
 import model.enums.ProjectStatus;
-import model.enums.TaskStatus;
 import output.IProjectRepository;
 import output.ITaskRepository;
 
@@ -28,9 +28,7 @@ public class CreateTaskUseCase implements ITaskCreateInput {
     }
 
     @Override
-    public Task createTask(Long projectId, String title,
-                           Integer estimateHours, String assignee,
-                           TaskStatus status) {
+    public Task createTask(Long projectId, CreateTaskDTO dto) {
 
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new
@@ -42,7 +40,14 @@ public class CreateTaskUseCase implements ITaskCreateInput {
 
         LocalDateTime now = LocalDateTime.now(clock);
 
-        Task task = Task.create(project, title, estimateHours, assignee, status, now);
+        Task task = Task.create(
+                project,
+                dto.title(),
+                dto.estimateHours(),
+                dto.assignee(),
+                dto.status(),
+                now
+        );
 
         return taskRepository.save(task);
     }

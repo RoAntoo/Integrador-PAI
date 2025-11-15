@@ -2,6 +2,7 @@ package usecase;
 
 import exception.BusinessRuleViolationException;
 import exception.ResourceNotFoundException;
+import input.DTO.CreateTaskDTO;
 import model.Project;
 import model.Task;
 import model.enums.ProjectStatus;
@@ -46,10 +47,18 @@ class CreateTaskUseCaseTest {
 
     private Long projectId = 1L;
     private LocalDateTime fakeNow;
+    private CreateTaskDTO validDTO;
 
     @BeforeEach
     void setUp() {
         fakeNow = LocalDateTime.of(2025, 11, 10, 10, 0);
+
+        validDTO = new CreateTaskDTO(
+                "Nueva Tarea",
+                8,
+                "user",
+                TaskStatus.TODO
+        );
     }
 
     @Test
@@ -62,12 +71,10 @@ class CreateTaskUseCaseTest {
         when(mockProject.getStatus()).thenReturn(ProjectStatus.ACTIVE);
         when(taskRepository.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Task result = createTaskUseCase.createTask(
-                projectId, "new task", 8, "user", TaskStatus.TODO
-        );
+        Task result = createTaskUseCase.createTask(projectId, validDTO);
 
         assertNotNull(result);
-        assertEquals("new task", result.getTitle());
+        assertEquals("Nueva Tarea", result.getTitle());
         verify(projectRepository, times(1)).findById(projectId);
         verify(taskRepository, times(1)).save(any(Task.class));
     }
@@ -77,9 +84,7 @@ class CreateTaskUseCaseTest {
         when(projectRepository.findById(projectId)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> {
-            createTaskUseCase.createTask(
-                    projectId, "task", 8, "user", TaskStatus.TODO
-            );
+            createTaskUseCase.createTask(projectId, validDTO);
         });
 
         verify(taskRepository, never()).save(any(Task.class));
@@ -91,9 +96,7 @@ class CreateTaskUseCaseTest {
         when(mockProject.getStatus()).thenReturn(ProjectStatus.CLOSED);
 
         assertThrows(BusinessRuleViolationException.class, () -> {
-            createTaskUseCase.createTask(
-                    projectId, "task", 8, "user", TaskStatus.TODO
-            );
+            createTaskUseCase.createTask(projectId, validDTO);
         });
 
         verify(taskRepository, never()).save(any(Task.class));

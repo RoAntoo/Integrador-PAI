@@ -1,10 +1,8 @@
 package input;
 
+import input.DTO.CreateTaskDTO;
 import model.Task;
-import model.enums.TaskStatus;
 
 public interface ITaskCreateInput {
-    Task createTask(Long projectId, String title,
-                    Integer estimateHours,
-                    String assignee, TaskStatus status);
+    Task createTask(Long projectId, CreateTaskDTO dto);
 }
