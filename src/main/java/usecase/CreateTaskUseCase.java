@@ -2,7 +2,7 @@ package usecase;
 
 import exception.BusinessRuleViolationException;
 import exception.ResourceNotFoundException;
-import input.ITaskInput;
+import input.ITaskCreateInput;
 import model.Project;
 import model.Task;
 import model.enums.ProjectStatus;
@@ -13,7 +13,7 @@ import output.ITaskRepository;
 import java.time.Clock;
 import java.time.LocalDateTime;
 
-public class CreateTaskUseCase implements ITaskInput {
+public class CreateTaskUseCase implements ITaskCreateInput {
 
     private final IProjectRepository projectRepository;
     private final ITaskRepository taskRepository;
