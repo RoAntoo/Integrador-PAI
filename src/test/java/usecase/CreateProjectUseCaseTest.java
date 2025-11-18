@@ -1,12 +1,13 @@
 package usecase;
 
-import exception.BusinessRuleViolationException;
-import exception.DuplicateResourceException;
-import input.DTO.CreateProjectDTO;
-import model.Project;
-import model.enums.ProjectStatus;
-import output.IProjectRepository;
+import com.pa.proyecto.backend_integrator.core.exception.BusinessRuleViolationException;
+import com.pa.proyecto.backend_integrator.core.exception.DuplicateResourceException;
+import com.pa.proyecto.backend_integrator.core.input.DTO.CreateProjectDTO;
+import com.pa.proyecto.backend_integrator.core.model.Project;
+import com.pa.proyecto.backend_integrator.core.model.enums.ProjectStatus;
+import com.pa.proyecto.backend_integrator.core.output.IProjectRepository;
 
+import com.pa.proyecto.backend_integrator.core.usecase.CreateProjectUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

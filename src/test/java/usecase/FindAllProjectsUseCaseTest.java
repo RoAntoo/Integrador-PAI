@@ -1,15 +1,19 @@
 package usecase;
 
-import input.DTO.FindProjectsQueryDTO;
-import model.Project;
-import model.enums.ProjectStatus;
-import output.IProjectRepository;
+import com.pa.proyecto.backend_integrator.adapter.persistence.ProjectSpecification;
+import com.pa.proyecto.backend_integrator.core.input.DTO.FindProjectsQueryDTO;
+import com.pa.proyecto.backend_integrator.core.model.Project;
+import com.pa.proyecto.backend_integrator.core.model.enums.ProjectStatus;
+import com.pa.proyecto.backend_integrator.core.output.IProjectRepository;
 
+import com.pa.proyecto.backend_integrator.core.usecase.FindAllProjectsUseCase;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,24 +27,33 @@ class FindAllProjectsUseCaseTest {
     @Mock
     private IProjectRepository projectRepository;
 
+    @Mock
+    private ProjectSpecification projectSpecification;
+
     @InjectMocks
     private FindAllProjectsUseCase findAllProjectsUseCase;
+
+    private Specification<Project> dummySpec;
+
+    @BeforeEach
+    void setUp() {
+        dummySpec = Specification.unrestricted();
+    }
 
     @Test
     void testFindAllProjects_NoFilters() {
         FindProjectsQueryDTO query = FindProjectsQueryDTO.empty();
+        List<Project> mockList = List.of(mock(Project.class), mock(Project.class));
 
-        Project p1 = mock(Project.class);
-        Project p2 = mock(Project.class);
-        List<Project> mockList = List.of(p1, p2);
+        when(projectSpecification.build(query)).thenReturn(dummySpec);
 
-        when(projectRepository.findWithFilters(query)).thenReturn(mockList);
+        when(projectRepository.findAll(dummySpec)).thenReturn(mockList);
 
         List<Project> result = findAllProjectsUseCase.findAllProjects(query);
 
         assertEquals(2, result.size());
-        assertSame(mockList, result);
-        verify(projectRepository, times(1)).findWithFilters(query);
+        verify(projectRepository, times(1)).findAll(dummySpec);
+        verify(projectSpecification, times(1)).build(query);
     }
 
     @Test
@@ -50,16 +63,16 @@ class FindAllProjectsUseCaseTest {
                 Optional.empty(),
                 Optional.empty()
         );
+        List<Project> mockList = List.of(mock(Project.class));
 
-        Project p1 = mock(Project.class);
-        List<Project> mockList = List.of(p1);
-
-        when(projectRepository.findWithFilters(query)).thenReturn(mockList);
+        when(projectSpecification.build(query)).thenReturn(dummySpec);
+        when(projectRepository.findAll(dummySpec)).thenReturn(mockList);
 
         List<Project> result = findAllProjectsUseCase.findAllProjects(query);
 
         assertEquals(1, result.size());
-        verify(projectRepository, times(1)).findWithFilters(query);
+        verify(projectRepository, times(1)).findAll(dummySpec);
+        verify(projectSpecification, times(1)).build(query);
     }
 
     @Test
@@ -67,12 +80,13 @@ class FindAllProjectsUseCaseTest {
         FindProjectsQueryDTO query = FindProjectsQueryDTO.empty();
         List<Project> emptyList = List.of();
 
-        when(projectRepository.findWithFilters(query)).thenReturn(emptyList);
+        when(projectSpecification.build(query)).thenReturn(dummySpec);
+        when(projectRepository.findAll(dummySpec)).thenReturn(emptyList);
 
         List<Project> result = findAllProjectsUseCase.findAllProjects(query);
 
-        assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(projectRepository, times(1)).findWithFilters(query);
+        verify(projectRepository, times(1)).findAll(dummySpec);
+        verify(projectSpecification, times(1)).build(query);
     }
 }
