@@ -1,10 +1,11 @@
 package usecase;
 
-import input.DTO.FindProjectsQueryDTO;
-import model.Project;
-import model.enums.ProjectStatus;
-import output.IProjectRepository;
+import com.pa.proyecto.backend_integrator.core.input.DTO.FindProjectsQueryDTO;
+import com.pa.proyecto.backend_integrator.core.model.Project;
+import com.pa.proyecto.backend_integrator.core.model.enums.ProjectStatus;
+import com.pa.proyecto.backend_integrator.core.output.IProjectRepository;
 
+import com.pa.proyecto.backend_integrator.core.usecase.FindAllProjectsUseCase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

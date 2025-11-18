@@ -1,8 +1,8 @@
 package com.pa.proyecto.backend_integrator.adapter.web;
 
-import exception.BusinessRuleViolationException;
-import exception.DuplicateResourceException;
-import exception.ResourceNotFoundException;
+import com.pa.proyecto.backend_integrator.core.exception.BusinessRuleViolationException;
+import com.pa.proyecto.backend_integrator.core.exception.DuplicateResourceException;
+import com.pa.proyecto.backend_integrator.core.exception.ResourceNotFoundException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

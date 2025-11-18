@@ -1,15 +1,16 @@
 package usecase;
 
-import exception.BusinessRuleViolationException;
-import exception.ResourceNotFoundException;
-import input.DTO.CreateTaskDTO;
-import model.Project;
-import model.Task;
-import model.enums.ProjectStatus;
-import model.enums.TaskStatus;
-import output.IProjectRepository;
-import output.ITaskRepository;
+import com.pa.proyecto.backend_integrator.core.exception.BusinessRuleViolationException;
+import com.pa.proyecto.backend_integrator.core.exception.ResourceNotFoundException;
+import com.pa.proyecto.backend_integrator.core.input.DTO.CreateTaskDTO;
+import com.pa.proyecto.backend_integrator.core.model.Project;
+import com.pa.proyecto.backend_integrator.core.model.Task;
+import com.pa.proyecto.backend_integrator.core.model.enums.ProjectStatus;
+import com.pa.proyecto.backend_integrator.core.model.enums.TaskStatus;
+import com.pa.proyecto.backend_integrator.core.output.IProjectRepository;
+import com.pa.proyecto.backend_integrator.core.output.ITaskRepository;
 
+import com.pa.proyecto.backend_integrator.core.usecase.CreateTaskUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

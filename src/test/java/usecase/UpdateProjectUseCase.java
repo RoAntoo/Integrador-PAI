@@ -1,13 +1,14 @@
 package usecase;
 
-import exception.BusinessRuleViolationException;
-import exception.DuplicateResourceException;
-import exception.ResourceNotFoundException;
-import input.DTO.UpdateProjectDTO;
-import model.Project;
-import model.enums.ProjectStatus;
-import output.IProjectRepository;
+import com.pa.proyecto.backend_integrator.core.exception.BusinessRuleViolationException;
+import com.pa.proyecto.backend_integrator.core.exception.DuplicateResourceException;
+import com.pa.proyecto.backend_integrator.core.exception.ResourceNotFoundException;
+import com.pa.proyecto.backend_integrator.core.input.DTO.UpdateProjectDTO;
+import com.pa.proyecto.backend_integrator.core.model.Project;
+import com.pa.proyecto.backend_integrator.core.model.enums.ProjectStatus;
+import com.pa.proyecto.backend_integrator.core.output.IProjectRepository;
 
+import com.pa.proyecto.backend_integrator.core.usecase.UpdateProjectUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,8 +1,9 @@
 package com.pa.proyecto.backend_integrator.config;
 
-import output.IProjectRepository;
-import output.ITaskRepository;
-import usecase.*;
+import com.pa.proyecto.backend_integrator.adapter.persistence.ProjectSpecification;
+import com.pa.proyecto.backend_integrator.core.output.IProjectRepository;
+import com.pa.proyecto.backend_integrator.core.output.ITaskRepository;
+import com.pa.proyecto.backend_integrator.core.usecase.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -28,8 +29,11 @@ public class UseCaseConfig {
     }
 
     @Bean
-    public FindAllProjectsUseCase findAllProjectsUseCase(IProjectRepository projectRepository) {
-        return new FindAllProjectsUseCase(projectRepository);
+    public FindAllProjectsUseCase findAllProjectsUseCase(
+            IProjectRepository projectRepository,
+            ProjectSpecification projectSpecification) {
+
+        return new FindAllProjectsUseCase(projectRepository, projectSpecification);
     }
 
     // TASK
