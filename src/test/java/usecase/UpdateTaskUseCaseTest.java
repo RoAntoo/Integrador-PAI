@@ -1,3 +1,5 @@
+//EL test me funciona con la ruta anterior de este paquete¿? la actual y la que deberia ser es la:
+// package com.pa.proyecto.backend_integrator.core.usecase;
 package usecase;
 
 import com.pa.proyecto.backend_integrator.core.exception.BusinessRuleViolationException;
